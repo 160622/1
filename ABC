@@ -1,91 +1,91 @@
-       ;put data in RAM
-0000|  MOV 30H, #'A'
-0003|  MOV 31H, #'B'
-0006|  MOV 32H, #'C'
-0009|  MOV 33H, #0 ; end of data marker
-       ; initialise the display
-       ; see instruction set for details
-000C|  CLR P1.3 ; clear RS - indicates that instructions are being sent to the module
-       ; function set
-000E|  CLR P1.7 ; |
-0010|  CLR P1.6 ; |
-0012|  SETB P1.5 ; |
-0014|  CLR P1.4 ; | high nibble set
-0016|  SETB P1.2 ; |
-0018|  CLR P1.2 ; | negative edge on E
-001A|  CALL delay ; wait for BF to clear
-       ; function set sent for first time - tells module to go into 4-bit mode
-       ; Why is function set high nibble sent twice? See 4-bit operation on pages 39 and 42of HD44780.pdf.
-001C|  SETB P1.2 ; |
-001E|  CLR P1.2 ; | negative edge on E
-       ; same function set high nibble sent a second time
-0020|  SETB P1.7 ; low nibble set (only P1.7 needed to be changed)
-0022|  SETB P1.2 ; |
-0024|  CLR P1.2 ; | negative edge on E
-       ; function set low nibble sent
-0026|  CALL delay ; wait for BF to clear
-       ; entry mode set
-       ; set to increment with no shift
-0028|  CLR P1.7 ; |
-002A|  CLR P1.6 ; |
-002C|  CLR P1.5 ; |
-002E|  CLR P1.4 ; | high nibble set
-0030|  SETB P1.2 ; |
-0032|  CLR P1.2 ; | negative edge on E
-0034|  SETB P1.6 ; |
-0036|  SETB P1.5 ; |low nibble set
-0038|  SETB P1.2 ; |
-003A|  CLR P1.2 ; | negative edge on E
-003C|  CALL delay ; wait for BF to clear
-       ; display on/off control
-       ; the display is turned on, the cursor is turned on and blinking is turned on
-003E|  CLR P1.7 ; |
-0040|  CLR P1.6 ; |
-0042|  CLR P1.5 ; |
-0044| CLR P1.4 ; | high nibble set
-0046|  SETB P1.2 ; |
-0048|  CLR P1.2 ; | negative edge on E
-004A|  SETB P1.7 ; |
-004C|  SETB P1.6 ; |
-004E|  SETB P1.5 ; |
-0050|  SETB P1.4 ; | low nibble set
-0052|  SETB P1.2 ; |
-0054|  CLR P1.2 ; | negative edge on E
-0056|  CALL delay ; wait for BF to clear
-       ; send data
-0058|  SETB P1.3 ; clear RS - indicates that data is being sent to module
-005A|  MOV R1, #30H ; data to be sent to LCD is stored in 8051 RAM, starting at location 30H
-       loop:
-005C|  MOV A, @R1 ; move data pointed to by R1 to A
-005D|  JZ finish ; if A is 0, then end of data has been reached - jump out of loop
-005F|  CALL sendCharacter ; send data in A to LCD module
-0061|  INC R1 ; point to next piece of data
-0062|  JMP loop ; repeat
-       finish:
-0064|  JMP $
-       sendCharacter:
-0066|  MOV C, ACC.7 ; |
-0068|  MOV P1.7, C ; |
-006A|  MOV C, ACC.6 ; |
-006C|  MOV P1.6, C ; |
-006E|  MOV C, ACC.5 ; |
-0070|  MOV P1.5, C ; |
-0072|  MOV C, ACC.4 ; |
-0074|  MOV P1.4, C ; | high nibble set
-0076|  SETB P1.2 ; |
-0078|  CLR P1.2 ; | negative edge on E
-007A|  MOV C, ACC.3 ; |
-007C|  MOV P1.7, C ; |
-007E|  MOV C, ACC.2 ; |
-0080|  MOV P1.6, C ; |
-0082|  MOV C, ACC.1 ; |
-0084|  MOV P1.5, C ; |
-0086|  MOV C, ACC.0 ; |
-0088|  MOV P1.4, C ; | low nibble set
-008A|  SETB P1.2 ; |
-008C|  CLR P1.2 ; | negative edge on E
-008E|  CALL delay ; wait for BF to clear
-       delay:
-0090|  MOV R0, #50
-0092|  DJNZ R0, $
-0094|  RET
+;put data in RAM
+ MOV 30H, #'A'
+ MOV 31H, #'B'
+ MOV 32H, #'C'
+ MOV 33H, #0 ; end of data marker
+ ; initialise the display
+ ; see instruction set for details
+ CLR P1.3 ; clear RS - indicates that instructions are being sent to the module
+ ; function set
+ CLR P1.7 ; |
+ CLR P1.6 ; |
+ SETB P1.5 ; |
+ CLR P1.4 ; | high nibble set
+ SETB P1.2 ; |
+ CLR P1.2 ; | negative edge on E
+ CALL delay ; wait for BF to clear
+ ; function set sent for first time - tells module to go into 4-bit mode
+ ; Why is function set high nibble sent twice? See 4-bit operation on pages 39 and 42 of HD44780.pdf.
+ SETB P1.2 ; |
+ CLR P1.2 ; | negative edge on E
+ ; same function set high nibble sent a second time
+ SETB P1.7 ; low nibble set (only P1.7 needed to be changed)
+ SETB P1.2 ; |
+ CLR P1.2 ; | negative edge on E
+ ; function set low nibble sent
+ CALL delay ; wait for BF to clear
+ ; entry mode set
+ ; set to increment with no shift
+ CLR P1.7 ; |
+ CLR P1.6 ; |
+ CLR P1.5 ; |
+ CLR P1.4 ; | high nibble set
+ SETB P1.2 ; |
+ CLR P1.2 ; | negative edge on E
+ SETB P1.6 ; |
+ SETB P1.5 ; |low nibble set
+ SETB P1.2 ; |
+ CLR P1.2 ; | negative edge on E
+ CALL delay ; wait for BF to clear
+ ; display on/off control
+ ; the display is turned on, the cursor is turned on and blinking is turned on
+ CLR P1.7 ; |
+ CLR P1.6 ; |
+ CLR P1.5 ; |
+CLR P1.4 ; | high nibble set
+ SETB P1.2 ; |
+ CLR P1.2 ; | negative edge on E
+ SETB P1.7 ; |
+ SETB P1.6 ; |
+ SETB P1.5 ; |
+ SETB P1.4 ; | low nibble set
+ SETB P1.2 ; |
+ CLR P1.2 ; | negative edge on E
+ CALL delay ; wait for BF to clear
+ ; send data
+ SETB P1.3 ; clear RS - indicates that data is being sent to module
+ MOV R1, #30H ; data to be sent to LCD is stored in 8051 RAM, starting at location 30H
+ loop:
+ MOV A, @R1 ; move data pointed to by R1 to A
+ JZ finish ; if A is 0, then end of data has been reached - jump out of loop
+ CALL sendCharacter ; send data in A to LCD module
+ INC R1 ; point to next piece of data
+ JMP loop ; repeat
+ finish:
+ JMP $
+ sendCharacter:
+ MOV C, ACC.7 ; |
+ MOV P1.7, C ; |
+ MOV C, ACC.6 ; |
+ MOV P1.6, C ; |
+ MOV C, ACC.5 ; |
+ MOV P1.5, C ; |
+ MOV C, ACC.4 ; |
+ MOV P1.4, C ; | high nibble set
+ SETB P1.2 ; |
+ CLR P1.2 ; | negative edge on E
+ MOV C, ACC.3 ; |
+ MOV P1.7, C ; |
+ MOV C, ACC.2 ; |
+ MOV P1.6, C ; |
+ MOV C, ACC.1 ; |
+ MOV P1.5, C ; |
+ MOV C, ACC.0 ; |
+ MOV P1.4, C ; | low nibble set
+ SETB P1.2 ; |
+ CLR P1.2 ; | negative edge on E
+ CALL delay ; wait for BF to clear
+ delay:
+ MOV R0, #50
+ DJNZ R0, $
+ RET
